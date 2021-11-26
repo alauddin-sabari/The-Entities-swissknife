@@ -11,6 +11,7 @@ import utils
 
 st.set_page_config(
     page_title="The Entities Swissknife",
+    page_icon="https://cdn.shortpixel.ai/spai/q_lossy+ret_img+to_auto/https://studiomakoto.it/wp-content/uploads/2021/08/cropped-favicon-16x16-1-192x192.png",
     menu_items={
         "Get help": None,
         "Report a bug": None,
@@ -25,11 +26,11 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# if "en_nlp" not in st.session_state:
-#     st.session_state.en_nlp = spacy.load("en_core_web_md")
+if "en_nlp" not in st.session_state:
+    st.session_state.en_nlp = spacy.load("en_core_web_sm")
 
-# if "it_nlp" not in st.session_state:
-#     st.session_state.it_nlp = spacy.load("it_core_news_md")
+if "it_nlp" not in st.session_state:
+    st.session_state.it_nlp = spacy.load("it_core_news_sm")
 
 if "anim" not in st.session_state:
     with open("data.json") as f:
