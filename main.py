@@ -25,11 +25,11 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-if "en_nlp" not in st.session_state:
-    st.session_state.en_nlp = spacy.load("en_core_web_md")
+# if "en_nlp" not in st.session_state:
+#     st.session_state.en_nlp = spacy.load("en_core_web_md")
 
-if "it_nlp" not in st.session_state:
-    st.session_state.it_nlp = spacy.load("it_core_news_md")
+# if "it_nlp" not in st.session_state:
+#     st.session_state.it_nlp = spacy.load("it_core_news_md")
 
 if "anim" not in st.session_state:
     with open("data.json") as f:
