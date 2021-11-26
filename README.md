@@ -1,2 +1,2 @@
 # Entities-swissknife
-A streampilit App devoted to NEL: named Entities Recognition and Wikification to support Semantic Publishing through Schema.org Structured Data Markup (JSON-LD).
+A streamilit App devoted to NEL: Named Entities Recognition and Wikification (linking wikipedia/wikidata URLs) to support Semantic Publishing through Schema.org Structured Data Markup (in JSON-LD format).
