@@ -31,8 +31,12 @@ if "en_nlp" not in st.session_state:
 if "it_nlp" not in st.session_state:
     st.session_state.it_nlp = spacy.load("it_core_news_md")
 
-with open("data.json") as f:
-    anim = json.loads(f.read())
+if "anim" not in st.session_state:
+    with open("data.json") as f:
+        st.session_state.anim = json.loads(f.read())
+    
+    with st.sidebar:
+        st_lottie(st.session_state.anim, width=300, height=250, loop=False)
 
 
 st.markdown(
@@ -46,8 +50,6 @@ st.markdown(
 df = None
 
 with st.form("my_form"):
-    with st.sidebar:
-        st_lottie(anim, width=300, height=250, loop=False)
     api_selectbox = st.sidebar.selectbox(
         "Choose the API you wish to use",
         ("Text Razor", "Google NLP")
