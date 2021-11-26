@@ -2,7 +2,7 @@
 name = "1st_app"
 version = "0.2.0"
 description = ""
-authors = ["Ahmed Sultan <ahmed.khaled4941@gmail.com>"]
+authors = ["Studio Makoto <massimiliano@studiomakoto.it>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<4.0"
