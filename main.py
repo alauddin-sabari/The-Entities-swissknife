@@ -60,9 +60,9 @@ with st.form("my_form"):
         ("URL", "Text")
     )
     
-    st.sidebar.markdown('##### Register on the [TextRazor website](https://www.textrazor.com/) to obtain a free API keyword (500 calls/day 🙌) or activate the [NLP API](https://cloud.google.com/natural-language) inside your Google Cloud Console, and export the JSON authentication file.') 
-    st.sidebar.markdown('##### Knowledge Graph topic ID extraction is present only using the Google NLP API.') 
-    st.sidebar.markdown('##### Categories and Topics - by [IPTC Media Topics](https://iptc.org/standards/media-topics/) - are avalaible only using the TextRazor API.') 
+    st.sidebar.info('##### Register on the [TextRazor website](https://www.textrazor.com/) to obtain a free API keyword (500 calls/day 🙌) or activate the [NLP API](https://cloud.google.com/natural-language) inside your Google Cloud Console, and export the JSON authentication file.') 
+    st.sidebar.info('##### Knowledge Graph topic ID extraction is present only using the Google NLP API.') 
+    st.sidebar.info('##### Categories and Topics - by [IPTC Media Topics](https://iptc.org/standards/media-topics/) - are avalaible only using the TextRazor API.') 
    
     with st.expander("ℹ️ - About this app "):
         st.markdown(
@@ -167,41 +167,43 @@ if 'submit' in st.session_state and ("text_razor" in st.session_state and st.ses
     text_input, is_url = utils.write_meta(text_input, meta_tags_only, is_url)
     if 'df_razor' in st.session_state:
         df = st.session_state["df_razor"]
-    df['temp'] = df['Relevance Score'].str.strip('%').astype(float)
-    df = df.sort_values('temp', ascending=False)
-    del df['temp']
-    selected_about_names = st.multiselect('Select About Entities:', df.name)
-    selected_mention_names = st.multiselect('Select Mention Entities:', df.name.sort_values())
+    if len(df) > 0:
+        df['temp'] = df['Relevance Score'].str.strip('%').astype(float)
+        df = df.sort_values('temp', ascending=False)
+        del df['temp']
+        selected_about_names = st.multiselect('Select About Entities:', df.name)
+        selected_mention_names = st.multiselect('Select Mention Entities:', df.name.sort_values())
     st.write('### Entities', df)
     c, t = st.columns(2)
-    if 'df_razor_categories' in st.session_state:
+    if 'df_razor_categories' in st.session_state and extract_categories_topics:
         with c:
             df_categories = st.session_state["df_razor_categories"]
             st.write('### Categories', df_categories)
-    if 'df_razor_topics' in st.session_state:
+    if 'df_razor_topics' in st.session_state and extract_categories_topics:
         with t:
             df_topics = st.session_state["df_razor_topics"]
             st.write('### Topics', df_topics)
     
-    about_download_button = utils.download_button(utils.convert_schema("about", df.loc[df['name'].isin(selected_about_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'about-entities.json', 'Download About Entities JSON-LD ✨', pickle_it=False)
-    if len(df.loc[df['name'].isin(selected_about_names)]) > 0:
-        st.markdown(about_download_button, unsafe_allow_html=True)
-    mention_download_button = utils.download_button(utils.convert_schema("mentions", df.loc[df['name'].isin(selected_mention_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'mentions-entities.json', 'Download Mentions Entities JSON-LD ✨', pickle_it=False)
-    if len(df.loc[df['name'].isin(selected_mention_names)]) > 0:
-        st.markdown(mention_download_button, unsafe_allow_html=True)
-    if "df_razor_topics" in st.session_state:
+    if len(df) > 0:
+        about_download_button = utils.download_button(utils.convert_schema("about", df.loc[df['name'].isin(selected_about_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'about-entities.json', 'Download About Entities JSON-LD ✨', pickle_it=False)
+        if len(df.loc[df['name'].isin(selected_about_names)]) > 0:
+            st.markdown(about_download_button, unsafe_allow_html=True)
+        mention_download_button = utils.download_button(utils.convert_schema("mentions", df.loc[df['name'].isin(selected_mention_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'mentions-entities.json', 'Download Mentions Entities JSON-LD ✨', pickle_it=False)
+        if len(df.loc[df['name'].isin(selected_mention_names)]) > 0:
+            st.markdown(mention_download_button, unsafe_allow_html=True)
+    if "df_razor_topics" in st.session_state and extract_categories_topics:
         df_topics = st.session_state["df_razor_topics"]
         download_buttons = ""
         download_buttons += utils.download_button(df_topics, 'topics.csv', 'Download all Topics CSV ✨', pickle_it=False)
         st.markdown(download_buttons, unsafe_allow_html=True)
-    if "df_razor_categories" in st.session_state:
+    if "df_razor_categories" in st.session_state and extract_categories_topics:
         df_categories = st.session_state["df_razor_categories"]
         download_buttons = ""
         download_buttons += utils.download_button(df_categories, 'categories.csv', 'Download all Categories CSV ✨', pickle_it=False)
         st.markdown(download_buttons, unsafe_allow_html=True)
-    download_buttons = ""
-    download_buttons += utils.download_button(df, 'entities.csv', 'Download all Entities CSV ✨', pickle_it=False)
-    st.markdown(download_buttons, unsafe_allow_html=True)
+        download_buttons = ""
+        download_buttons += utils.download_button(df, 'entities.csv', 'Download all Entities CSV ✨', pickle_it=False)
+        st.markdown(download_buttons, unsafe_allow_html=True)
     if spacy_pos:
         if st.session_state.lang in "eng":
             doc = st.session_state.en_nlp(st.session_state.text)
@@ -214,22 +216,24 @@ if 'submit' in st.session_state and ("google_api" in st.session_state and st.ses
     text_input, is_url = utils.write_meta(text_input, meta_tags_only, is_url)
     if 'df_google' in st.session_state:
         df = st.session_state["df_google"]
-    df['temp'] = df['Salience'].str.strip('%').astype(float)
-    df = df.sort_values('temp', ascending=False)
-    del df['temp']
-    selected_about_names = st.multiselect('Select About Entities:', df.name)
-    selected_mention_names = st.multiselect('Select Mentions Entities:', df.name.sort_values())
+    if len(df) > 0:
+        df['temp'] = df['Salience'].str.strip('%').astype(float)
+        df = df.sort_values('temp', ascending=False)
+        del df['temp']
+        selected_about_names = st.multiselect('Select About Entities:', df.name)
+        selected_mention_names = st.multiselect('Select Mentions Entities:', df.name.sort_values())
     st.write('### Entities', df)
     
-    about_download_button = utils.download_button(utils.convert_schema("about", df.loc[df['name'].isin(selected_about_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'about-entities.json', 'Download About Entities JSON-LD ✨', pickle_it=False)
-    if len(df.loc[df['name'].isin(selected_about_names)]) > 0:
-        st.markdown(about_download_button, unsafe_allow_html=True)
-    mention_download_button = utils.download_button(utils.convert_schema("mentions", df.loc[df['name'].isin(selected_mention_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'mentions-entities.json', 'Download Mentions Entities JSON-LD ✨', pickle_it=False)
-    if len(df.loc[df['name'].isin(selected_mention_names)]) > 0:
-        st.markdown(mention_download_button, unsafe_allow_html=True)
-    download_buttons = ""
-    download_buttons += utils.download_button(df, 'entities.csv', 'Download all Entities CSV ✨', pickle_it=False)
-    st.markdown(download_buttons, unsafe_allow_html=True)
+    if len(df) > 0:
+        about_download_button = utils.download_button(utils.convert_schema("about", df.loc[df['name'].isin(selected_about_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'about-entities.json', 'Download About Entities JSON-LD ✨', pickle_it=False)
+        if len(df.loc[df['name'].isin(selected_about_names)]) > 0:
+            st.markdown(about_download_button, unsafe_allow_html=True)
+        mention_download_button = utils.download_button(utils.convert_schema("mentions", df.loc[df['name'].isin(selected_mention_names)].to_json(orient='records'), scrape_all, st.session_state.lang), 'mentions-entities.json', 'Download Mentions Entities JSON-LD ✨', pickle_it=False)
+        if len(df.loc[df['name'].isin(selected_mention_names)]) > 0:
+            st.markdown(mention_download_button, unsafe_allow_html=True)
+        download_buttons = ""
+        download_buttons += utils.download_button(df, 'entities.csv', 'Download all Entities CSV ✨', pickle_it=False)
+        st.markdown(download_buttons, unsafe_allow_html=True)
     if spacy_pos:
         if st.session_state.lang in "eng":
             doc = st.session_state.en_nlp(st.session_state.text)

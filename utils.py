@@ -319,7 +319,7 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
                 entity_type = entity.freebase_types[0]
             else:
                 entity_type = "thing"
-            output.append({
+            data = {
                 "DBpedia Category": entity_type.split("/")[-1],
                 "name": entity.id,
                 "description": summary,
@@ -328,7 +328,11 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
                 "Relevance Score": f"{entity.relevance_score * 100:.2f}%",
                 "Wikipedia Link": entity.wikipedia_link,
                 "English Wikipedia Link": link,
-            })
+            }
+            if not scrape_all:
+                del data["description"]
+                del data["English Wikipedia Link"]
+            output.append(data)
             known_entities.append(entity.id)
         progress_bar.progress((progress_val)/len(response.entities()))
     topics_output = []
@@ -395,14 +399,18 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
                 row_type = google_types[entity.type_]
             else:
                 row_type = "thing"
-            output.append({
+            if not scrape_all:
+                del data["description"]
+                del data["English Wikipedia Link"]
+            data = {
                 "DBpedia Category": row_type,
                 "name": entity.name,
                 "description": summary,
                 "Salience": f"{entity.salience * 100:.2f}%",
                 "Knowledge Graph ID": mid,
                 "English Wikipedia Link": link,
-            })
+            }
+            output.append(data)
             known_entities.append(entity.name)
         progress_bar.progress((progress_val)/len(response.entities))
     return output, response
