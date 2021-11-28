@@ -37,7 +37,7 @@ if "anim" not in st.session_state:
         st.session_state.anim = json.loads(f.read())
     
     with st.sidebar:
-        st_lottie(st.session_state.anim, width=300, height=250, loop=False)
+        st_lottie(st.session_state.anim, width=350, height=300, loop=False)
 
 
 st.markdown(
