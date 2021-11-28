@@ -135,7 +135,7 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
     is_url = utils.is_url(text_input)
     # spacy_pos = st.checkbox('Process Part-of-Speech analysis with SpaCy')
     spacy_pos = False
-    scrape_all = st.checkbox("Scrape ALL the Entities descriptions from Wikipedia. This is a time-consuming task, so grab a coffee if you need all the descriptions in your CSV file. The descriptions of the Entities you select for your 'about' and 'mention' schema properties will be scraped and present in the corresponding JSON-LD files")
+    scrape_all = st.checkbox("Scrape ALL the Entities descriptions from Wikipedia. This is a time-consuming task, so grab a coffee if you need all the descriptions in your CSV file. The descriptions of the Entities you select for your 'about' and 'mentions' schema properties will be scraped and present in the corresponding JSON-LD files")
     if api_selectbox == "Text Razor":
         extract_categories_topics = st.checkbox('Extract Categories and Topics')
     submitted = st.form_submit_button("Submit")
