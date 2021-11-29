@@ -9,6 +9,9 @@ import streamlit as st
 
 import utils
 
+# author_textrazor_token = "ee51ae2edeb7274078eb100f5d236a6af1e6df1810273530738a2614"
+author_textrazor_token = None
+
 st.set_page_config(
     page_title="The Entities Swissknife",
     page_icon="https://cdn.shortpixel.ai/spai/q_lossy+ret_img+to_auto/https://studiomakoto.it/wp-content/uploads/2021/08/cropped-favicon-16x16-1-192x192.png",
@@ -105,7 +108,10 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
     if api_selectbox == "Text Razor":
         google_api = None
         st.session_state.google_api = False
-        text_razor_key = st.text_input('Please enter a valid TextRazor API Key (Required)')
+        if not author_textrazor_token:
+            text_razor_key = st.text_input('Please enter a valid TextRazor API Key (Required)')
+        else:
+            text_razor_key = author_textrazor_token
     elif api_selectbox == "Google NLP":
         text_razor_key = None
         st.session_state.text_razor = False
@@ -150,16 +156,16 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
                 output, response, topics_output, categories_output = utils.get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_url, scrape_all)
                 st.session_state.text = response.cleaned_text
                 st.session_state.text_razor = True
-                st.session_state.df_razor = st.cache(pd.DataFrame)(output)
+                st.session_state.df_razor = pd.DataFrame(output)
                 if topics_output:
-                    st.session_state.df_razor_topics = st.cache(pd.DataFrame)(topics_output)
+                    st.session_state.df_razor_topics = pd.DataFrame(topics_output)
                 if categories_output:
-                    st.session_state.df_razor_categories = st.cache(pd.DataFrame)(categories_output)
+                    st.session_state.df_razor_categories = pd.DataFrame(categories_output)
             elif api_selectbox == "Google NLP":
                 output, response = utils.get_df_google_nlp(google_key, text_input, is_url, scrape_all)
                 st.session_state.text = text_input
                 st.session_state.google_api = True
-                st.session_state.df_google = st.cache(pd.DataFrame)(output)
+                st.session_state.df_google = pd.DataFrame(output)
             
             st.session_state.lang = response.language
 

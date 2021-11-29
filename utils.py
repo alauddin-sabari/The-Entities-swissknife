@@ -66,14 +66,21 @@ def get_summary_link(title, lang):
 
         if lang in "ita":
             try:
-                link = page.langlinks["en"].fullurl
+                en_link = page.langlinks["en"].fullurl
+                it_link = page.fullurl
             except:
-                link = page.fullurl
+                en_link = ""
+                it_link = page.fullurl
         else:
-            link = ""
-        return summary, link
-    except:
-        return None, None
+            en_link = page.fullurl
+            try:
+                it_link = page.langlinks["it"].fullurl
+            except:
+                it_link = ""
+        return summary, en_link, it_link
+    except Exception as e:
+        print(e)
+        return None, None, None
 
 
 def convert_schema(schema_type, data, scrape_all, lang):
@@ -310,9 +317,9 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
         entity.relevance_score > 0 and\
         not str(entity.id).isnumeric() and not is_time(entity.id):
             summary = ""
-            link = ""
+            en_link = ""
             if scrape_all:
-                summary, link = get_summary_link(entity.id, response.language)
+                summary, en_link, it_link = get_summary_link(entity.id, response.language)
             if entity.dbpedia_types:
                 entity_type = entity.dbpedia_types[0]
             elif entity.freebase_types:
@@ -327,7 +334,7 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
                 "Confidence Score": entity.confidence_score,
                 "Relevance Score": f"{entity.relevance_score * 100:.2f}%",
                 "Wikipedia Link": entity.wikipedia_link,
-                "English Wikipedia Link": link,
+                "English Wikipedia Link": en_link,
             }
             if not scrape_all:
                 del data["description"]
@@ -388,28 +395,33 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
         if entity.name not in known_entities and\
         not str(entity.name).isnumeric() and not is_time(entity.name):
             summary = ""
-            link = ""
+            en_link = ""
+            it_link = ""
             if scrape_all:
-                summary, link = get_summary_link(entity.name, response.language)
+                summary, en_link, it_link = get_summary_link(entity.name, response.language)
             if entity.metadata.get("mid"):
                 mid = "https://www.google.com/search?kgmid=" + entity.metadata.get("mid")
             else:
                 mid = ""
             if entity.type_:
                 row_type = google_types[entity.type_]
+                if row_type in ["NUMBER", "PRICE", "DATE"]:
+                    continue
             else:
                 row_type = "thing"
-            if not scrape_all:
-                del data["description"]
-                del data["English Wikipedia Link"]
             data = {
-                "DBpedia Category": row_type,
+                "type": row_type,
                 "name": entity.name,
                 "description": summary,
                 "Salience": f"{entity.salience * 100:.2f}%",
                 "Knowledge Graph ID": mid,
-                "English Wikipedia Link": link,
+                "Italian Wikipedia Link": it_link,
+                "English Wikipedia Link": en_link,
             }
+            if not scrape_all:
+                del data["description"]
+                del data["English Wikipedia Link"]
+                del data["Italian Wikipedia Link"]
             output.append(data)
             known_entities.append(entity.name)
         progress_bar.progress((progress_val)/len(response.entities))
