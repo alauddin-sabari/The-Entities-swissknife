@@ -1,3 +1,4 @@
+import os
 import json
 from io import StringIO
 
@@ -9,8 +10,7 @@ import streamlit as st
 
 import utils
 
-# author_textrazor_token = "ee51ae2edeb7274078eb100f5d236a6af1e6df1810273530738a2614"
-author_textrazor_token = None
+author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
 
 st.set_page_config(
     page_title="The Entities Swissknife",
