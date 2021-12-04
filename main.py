@@ -178,7 +178,7 @@ if 'submit' in st.session_state and ("text_razor" in st.session_state and st.ses
         df = df.sort_values('temp', ascending=False)
         del df['temp']
         selected_about_names = st.multiselect('Select About Entities:', df.name)
-        selected_mention_names = st.multiselect('Select Mention Entities:', df.name.sort_values())
+        selected_mention_names = st.multiselect('Select Mentions Entities:', df.name.sort_values())
     st.write('### Entities', df)
     c, t = st.columns(2)
     if 'df_razor_categories' in st.session_state and extract_categories_topics:
