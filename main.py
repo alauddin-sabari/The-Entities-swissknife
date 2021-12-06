@@ -61,7 +61,7 @@ df = None
 with st.form("my_form"):
     api_selectbox = st.sidebar.selectbox(
         "Choose the API you wish to use",
-        ("Text Razor", "Google NLP")
+        ("TextRazor", "Google NLP")
     )
     input_type_selectbox = st.sidebar.selectbox(
         "Choose what you want to analyze",
