@@ -25,22 +25,26 @@ st.set_page_config(
 hide_st_style = """
             <style>
             footer {visibility: hidden;}
+            [title^='streamlit_lottie.streamlit_lottie'] {
+                margin-bottom: -35px;
+                margin-top: -90px;
+            }
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-if "en_nlp" not in st.session_state:
-    st.session_state.en_nlp = spacy.load("en_core_web_sm")
+# if "en_nlp" not in st.session_state:
+#     st.session_state.en_nlp = spacy.load("en_core_web_sm")
 
-if "it_nlp" not in st.session_state:
-    st.session_state.it_nlp = spacy.load("it_core_news_sm")
+# if "it_nlp" not in st.session_state:
+#     st.session_state.it_nlp = spacy.load("it_core_news_sm")
 
 if "anim" not in st.session_state:
     with open("data.json") as f:
         st.session_state.anim = json.loads(f.read())
     
     with st.sidebar:
-        st_lottie(st.session_state.anim, width=280, height=230, loop=False)
+        st_lottie(st.session_state.anim, width=280, height=230, loop=False, key="anim_makoto")
 
 
 st.markdown(
@@ -177,8 +181,9 @@ if 'submit' in st.session_state and ("text_razor" in st.session_state and st.ses
         df['temp'] = df['Relevance Score'].str.strip('%').astype(float)
         df = df.sort_values('temp', ascending=False)
         del df['temp']
-        selected_about_names = st.multiselect('Select About Entities:', df.name)
-        selected_mention_names = st.multiselect('Select Mentions Entities:', df.name.sort_values())
+        names = df.name.sort_values().unique().tolist()
+        selected_about_names = st.multiselect('Select About Entities:', names)
+        selected_mention_names = st.multiselect('Select Mentions Entities:', names)
     st.write('### Entities', df)
     c, t = st.columns(2)
     if 'df_razor_categories' in st.session_state and extract_categories_topics:
@@ -207,6 +212,7 @@ if 'submit' in st.session_state and ("text_razor" in st.session_state and st.ses
         download_buttons = ""
         download_buttons += utils.download_button(df_categories, 'categories.csv', 'Download all Categories CSV ✨', pickle_it=False)
         st.markdown(download_buttons, unsafe_allow_html=True)
+    if len(df) > 0:
         download_buttons = ""
         download_buttons += utils.download_button(df, 'entities.csv', 'Download all Entities CSV ✨', pickle_it=False)
         st.markdown(download_buttons, unsafe_allow_html=True)
@@ -226,6 +232,8 @@ if 'submit' in st.session_state and ("google_api" in st.session_state and st.ses
         df['temp'] = df['Salience'].str.strip('%').astype(float)
         df = df.sort_values('temp', ascending=False)
         del df['temp']
+        selected_about_names = []
+        selected_mention_names = []
         selected_about_names = st.multiselect('Select About Entities:', df.name)
         selected_mention_names = st.multiselect('Select Mentions Entities:', df.name.sort_values())
     st.write('### Entities', df)
