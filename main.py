@@ -11,6 +11,7 @@ import streamlit as st
 import utils
 
 author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
+author_google_key = os.getenv("GOOGLE_KEY")
 
 st.set_page_config(
     page_title="The Entities Swissknife",
@@ -119,9 +120,13 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
     elif api_selectbox == "Google NLP":
         text_razor_key = None
         st.session_state.text_razor = False
-        google_api = st.file_uploader("Please upload a valid Google NLP API Key (Required)", type=["json"])
-        if google_api:
-            google_key = json.loads(google_api.getvalue().decode("utf-8"))
+        if not author_google_key:
+            google_api = st.file_uploader("Please upload a valid Google NLP API Key (Required)", type=["json"])
+            if google_api:
+                google_key = json.loads(google_api.getvalue().decode("utf-8"))
+        else:
+            google_key = json.loads(author_google_key)
+        
 
     if input_type_selectbox == "URL":
         text_input = st.text_input('Please enter a URL', placeholder='https://gofishdigital.com/what-is-semantic-seo/')
