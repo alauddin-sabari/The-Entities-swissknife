@@ -411,7 +411,7 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
                 row_type = "thing"
             data = {
                 "type": row_type,
-                "name": entity.name,
+                "name": unidecode.unidecode(entity.name),
                 "description": summary,
                 "Salience": f"{entity.salience * 100:.2f}%",
                 "Knowledge Graph ID": mid,
