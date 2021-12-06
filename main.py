@@ -123,9 +123,9 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
         if not author_google_key:
             google_api = st.file_uploader("Please upload a valid Google NLP API Key (Required)", type=["json"])
             if google_api:
-                google_key = json.loads(google_api.getvalue().decode("utf-8"))
+                google_api = json.loads(google_api.getvalue().decode("utf-8"))
         else:
-            google_key = json.loads(author_google_key)
+            google_api = json.loads(author_google_key)
         
 
     if input_type_selectbox == "URL":
@@ -171,7 +171,7 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
                 if categories_output:
                     st.session_state.df_razor_categories = pd.DataFrame(categories_output)
             elif api_selectbox == "Google NLP":
-                output, response = utils.get_df_google_nlp(google_key, text_input, is_url, scrape_all)
+                output, response = utils.get_df_google_nlp(google_api, text_input, is_url, scrape_all)
                 st.session_state.text = text_input
                 st.session_state.google_api = True
                 st.session_state.df_google = pd.DataFrame(output)
