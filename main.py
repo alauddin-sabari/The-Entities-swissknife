@@ -110,7 +110,7 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
            """
         )
     
-    if api_selectbox == "Text Razor":
+    if api_selectbox == "TextRazor":
         google_api = None
         st.session_state.google_api = False
         if not author_textrazor_token:
@@ -151,7 +151,7 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
     # spacy_pos = st.checkbox('Process Part-of-Speech analysis with SpaCy')
     spacy_pos = False
     scrape_all = st.checkbox("Scrape ALL the Entities descriptions from Wikipedia. This is a time-consuming task, so grab a coffee if you need all the descriptions in your CSV file. The descriptions of the Entities you select for your 'about' and 'mentions' schema properties will be scraped and present in the corresponding JSON-LD files")
-    if api_selectbox == "Text Razor":
+    if api_selectbox == "TextRazor":
         extract_categories_topics = st.checkbox('Extract Categories and Topics')
     submitted = st.form_submit_button("Submit")
     if submitted:
@@ -161,7 +161,7 @@ Semantic publishing relies on Structured Data adoption and Entity Linking (Wikif
             st.warning("Please Enter a URL/Text in the required field")
         else:
             st.session_state.submit = True
-            if api_selectbox == "Text Razor":
+            if api_selectbox == "TextRazor":
                 output, response, topics_output, categories_output = utils.get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_url, scrape_all)
                 st.session_state.text = response.cleaned_text
                 st.session_state.text_razor = True
