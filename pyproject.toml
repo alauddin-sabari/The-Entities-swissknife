@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "1st_app"
+name = "The Entities' Swissknife"
 version = "0.2.0"
 description = ""
 authors = ["Studio Makoto <massimiliano@studiomakoto.it>"]
